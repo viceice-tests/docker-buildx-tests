@@ -14,7 +14,6 @@ USER root
 RUN chown -R ubuntu:ubuntu /usr/src/app/
 
 
-
 # Build image
 #============
 FROM base as tsbuild
