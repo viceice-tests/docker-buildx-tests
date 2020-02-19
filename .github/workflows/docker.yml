@@ -47,11 +47,11 @@ jobs:
 
       - name: Test the Docker full image
         run: |
-          docker run --rm -t ${DOCKER_REPO} --version
+          docker run --rm -t ${DOCKER_REPO} yarn --version
 
       - name: Test the Docker slim image
         run: |
-          docker run --rm -t ${DOCKER_REPO}:slim --version
+          docker run --rm -t ${DOCKER_REPO}:slim yarn --version
 
       - name: Image history
         run: docker history ${DOCKER_REPO}
