@@ -43,7 +43,7 @@ jobs:
 
       - name: Build the Docker images
         run: |
-          docker buildx bake -f docker/buildx.hcl --set cache.output=type=docker
+          docker buildx bake -f buildx.hcl --set cache.output=type=docker
 
       - name: Test the Docker full image
         run: |
