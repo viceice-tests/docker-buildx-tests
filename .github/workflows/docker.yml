@@ -1,0 +1,59 @@
+name: Docker CI
+
+on:
+  push:
+  pull_request:
+
+env:
+  PLATFORM: linux/amd64
+  DOCKER_CACHE_TAG: _cache
+  DOCKER_REPO: renovate/renovate
+  CACHE_VERSION: v1
+
+jobs:
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 20
+
+    steps:
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: v0.3.1
+
+      - uses: actions/checkout@v2
+
+      - run: docker buildx ls
+
+      - name: Cache docker layer
+        id: docker_cache
+        uses: actions/cache@v1
+        with:
+          path: tmp/docker
+          key: docker_cache-${{ env.CACHE_VERSION }}-${{ hashFiles('Dockerfile*') }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            docker_cache-${{ env.CACHE_VERSION }}-
+
+      - name: Prepare docker cache
+        if: steps.docker_cache.outputs.cache-hit != 'true'
+        run: docker buildx bake -f buildx.hcl base
+
+      - name: Build the Docker images
+        run: |
+          docker buildx bake -f docker/buildx.hcl --set cache.output=type=docker
+
+      - name: Test the Docker full image
+        run: |
+          docker run --rm -t ${DOCKER_REPO} --version
+
+      - name: Test the Docker slim image
+        run: |
+          docker run --rm -t ${DOCKER_REPO}:slim --version
+
+      - name: Image history
+        run: docker history ${DOCKER_REPO}
+      - name: Image size
+        run: docker image ls | grep ${DOCKER_REPO}
