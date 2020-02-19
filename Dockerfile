@@ -22,15 +22,41 @@ RUN echo install more build deps
 
 USER ubuntu
 
-COPY . test
-RUN echo building
+COPY package.json .
+COPY yarn.lock .
+RUN yarn install --frozen-lockfile
 
-RUN mkdir dist
+COPY lib lib
+RUN cp -r lib/ dist/
 RUN echo done > dist/test.txt
+
+# Final image
+#============
+FROM base as final
+
+
+# The git version of ubuntu 18.04 is too old to sort ref tags properly (see #5477), so update it to the latest stable version
+RUN echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu bionic main\ndeb-src http://ppa.launchpad.net/git-core/ppa/ubuntu bionic main" > /etc/apt/sources.list.d/git.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E1DD270288B4E6030699E45FA1715D88E1DF1F24 && \
+    apt-get update && \
+    apt-get -y install git && \
+    rm -rf /var/lib/apt/lists/*
+
+# Docker client and group
+
+RUN groupadd -g 999 docker
+RUN usermod -aG docker ubuntu
+
+ENV DOCKER_VERSION=19.03.1
+
+RUN curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz \
+  && tar xzvf docker-${DOCKER_VERSION}.tgz --strip 1 \
+  -C /usr/local/bin docker/docker \
+  && rm docker-${DOCKER_VERSION}.tgz
 
 # Slim image
 #============
-FROM base as slim
+FROM final as slim
 
 USER ubuntu
 
@@ -40,9 +66,11 @@ RUN cat dist/test.txt
 
 # Full image
 #============
-FROM base as full
+FROM final as full
 
-RUN echo install more deps
+RUN apt-get update && apt-get install -y gpg curl wget unzip xz-utils openssh-client bsdtar build-essential && \
+    rm -rf /var/lib/apt/lists/*
+
 
 USER ubuntu
 
