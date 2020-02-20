@@ -7,6 +7,10 @@ target "base" {
   target = "base"
 }
 
+target "settings" {
+  platform = ["linux/amd64"]
+}
+
 target "cache" {
   cache-from = ["type=local,src=tmp/docker"]
   cache-to = ["type=local,dest=tmp/docker,mode=max"]
@@ -25,5 +29,6 @@ target "renovate" {
 }
 
 target "test" {
+  inherits = ["settings"],
   target = "slim"
 }

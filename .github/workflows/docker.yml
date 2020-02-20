@@ -165,5 +165,5 @@ jobs:
           docker push docker.pkg.github.com/${{ github.repository }}/test:docker-slim
         continue-on-error: true
 
-      - run: docker buildx build -t docker.pkg.github.com/${{ github.repository }}/test --push .
+      - run: docker buildx build --platform linux/amd64 -t docker.pkg.github.com/${{ github.repository }}/test --push .
         continue-on-error: true
