@@ -25,6 +25,5 @@ target "renovate" {
 }
 
 target "test" {
-  tags = ["renovate/renovate:slim"]
   target = "slim"
 }
