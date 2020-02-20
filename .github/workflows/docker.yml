@@ -80,7 +80,7 @@ jobs:
       - name: Build the Docker images
         continue-on-error: true
         run: |
-          docker buildx bake -f buildx.hcl --set test.cache-to=docker.pkg.github.com/${{ github.repository }}/${DOCKER_REPO}:cache-slim test
+          docker buildx bake -f buildx.hcl --set test.cache-to=docker.pkg.github.com/${{ github.repository }}/test:cache-slim test
 
   cache_inline:
     runs-on: ubuntu-latest
@@ -106,6 +106,6 @@ jobs:
         run: |
           docker buildx bake -f buildx.hcl \
             --set test.cache-to=type=inline \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/${DOCKER_REPO}:slim \
+            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:slim \
             --set test.output=type=registry \
             test
