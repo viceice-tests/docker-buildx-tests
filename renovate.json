@@ -5,7 +5,7 @@
     ":automergeMinor",
     ":label(ready)",
     ":masterIssue"
-  ]
+  ],
   "prCreation": "not-pending",
   "packageRules": [
     {
