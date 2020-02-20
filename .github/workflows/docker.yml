@@ -155,9 +155,7 @@ jobs:
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-      - name: Build the Docker images
-        continue-on-error: true
-        run: |
+      - run: |
           docker buildx bake -f buildx.hcl \
             --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:docker-slim \
             --set test.cache-to=type=inline \
@@ -165,3 +163,7 @@ jobs:
             --set test.output=type=docker \
             test
           docker push docker.pkg.github.com/${{ github.repository }}/test:docker-slim
+        continue-on-error: true
+
+      - run: docker buildx build -t docker.pkg.github.com/${{ github.repository }}/test --push .
+        continue-on-error: true
