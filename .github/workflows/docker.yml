@@ -159,6 +159,7 @@ jobs:
         continue-on-error: true
         run: |
           docker buildx bake -f buildx.hcl \
+            --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:docker-slim \
             --set test.cache-to=type=inline \
             --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:docker-slim \
             --set test.output=type=docker \
