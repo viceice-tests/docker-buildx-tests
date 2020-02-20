@@ -58,7 +58,7 @@ jobs:
       - name: Image size
         run: docker image ls | grep ${DOCKER_REPO}
 
-  build2:
+  cache_to_registry:
     runs-on: ubuntu-latest
 
     timeout-minutes: 20
@@ -79,4 +79,27 @@ jobs:
 
       - name: Build the Docker images
         run: |
-          docker buildx bake -f buildx.hcl --set test.cache-to=docker.pkg.github.com/${{ github.repository }}/${DOCKER_REPO}:slim test
+          docker buildx bake -f buildx.hcl --set test.cache-to=docker.pkg.github.com/${{ github.repository }}/${DOCKER_REPO}:cache-slim test
+
+  cache_inline:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 20
+
+    steps:
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: v0.3.1
+
+      - uses: actions/checkout@v2
+
+      - run: docker buildx ls
+
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Build the Docker images
+        run: |
+          docker buildx bake -f buildx.hcl --set test.cache-to=type=inline --set test.tags=docker.pkg.github.com/${{ github.repository }}/${DOCKER_REPO}:slim test
