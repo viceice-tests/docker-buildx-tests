@@ -1,0 +1,16 @@
+{
+  "extends": [
+    "config:base",
+    ":rebaseStalePrs",
+    ":automergeMinor",
+    ":label(ready)",
+    ":masterIssue"
+  ],
+  "prCreation": "not-pending",
+  "packageRules": [
+    {
+      "updateTypes": ["major"],
+      "masterIssueApproval": true
+    }
+  ]
+}
