@@ -1,6 +1,6 @@
 # Base image
 #============
-FROM renovate/yarn:1.22.0@sha256:22cfbb7ecd47655a905c01fe3f2fcb3ac34839dd6d42d81eeb437c80475483ea AS base
+FROM renovate/yarn:1.22.4@sha256:e62f9d4b134c5016a819d3257ce7f0cc8f1a2a04998e59cdbb8e51309f56955e AS base
 
 LABEL maintainer="Michael Kries <michael.kriese@visualon.de"
 LABEL name="test"
