@@ -74,9 +74,8 @@ jobs:
       - name: Build the Docker images
         continue-on-error: true
         run: |
-          docker buildx bake -f buildx.hcl \
-            --set test.cache-to=type=registry;ref=docker.pkg.github.com/${{ github.repository }}/test:cache-slim2,mode=max \
-            --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:cache-slim2 \
+          docker buildx bake -f test.hcl \
+            --set test.cache-to=type=registry;ref=docker.pkg.github.com/${{ github.repository }}/test:cache-slim,mode=max \
             test
 
   cache_inline:
@@ -98,9 +97,9 @@ jobs:
       - name: Build the Docker images
         continue-on-error: true
         run: |
-          docker buildx bake -f buildx.hcl \
+          docker buildx bake -f test.hcl \
             --set test.cache-to=type=inline,mode=max \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:inline-slim2 \
+            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:inline-slim \
             --set test.output=type=registry \
             test
 
@@ -123,8 +122,8 @@ jobs:
       - name: Build the Docker images
         continue-on-error: true
         run: |
-          docker buildx bake -f buildx.hcl \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:slim2 \
+          docker buildx bake -f test.hcl \
+            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:slim \
             --set test.output=type=registry \
             test
 
