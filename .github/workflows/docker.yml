@@ -75,7 +75,9 @@ jobs:
         continue-on-error: true
         run: |
           docker buildx bake -f test.hcl \
-            --set test.cache-to=type=registry;ref=docker.pkg.github.com/${{ github.repository }}/test:cache-slim,mode=max \
+            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:cslim \
+            --set test.cache-to=type=registry;ref=docker.pkg.github.com/${{ github.repository }}/test:_cache-slim,mode=max \
+            --set test.output=type=registry \
             test
 
   cache_inline:
