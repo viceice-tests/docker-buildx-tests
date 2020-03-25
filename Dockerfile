@@ -11,7 +11,7 @@ WORKDIR /usr/src/app/
 # required for install
 USER root
 
-RUN chown -R ubuntu:ubuntu /usr/src/app/
+RUN chown -R ubuntu:0 /usr/src/app/
 
 
 # Build image
@@ -33,14 +33,6 @@ RUN echo done > dist/test.txt
 # Final image
 #============
 FROM base as final
-
-
-# The git version of ubuntu 18.04 is too old to sort ref tags properly (see #5477), so update it to the latest stable version
-RUN echo "deb http://ppa.launchpad.net/git-core/ppa/ubuntu bionic main\ndeb-src http://ppa.launchpad.net/git-core/ppa/ubuntu bionic main" > /etc/apt/sources.list.d/git.list && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E1DD270288B4E6030699E45FA1715D88E1DF1F24 && \
-    apt-get update && \
-    apt-get -y install git && \
-    rm -rf /var/lib/apt/lists/*
 
 # Docker client and group
 
@@ -68,7 +60,7 @@ RUN cat dist/test.txt
 #============
 FROM final as full
 
-RUN apt-get update && apt-get install -y gpg curl wget unzip xz-utils openssh-client bsdtar build-essential && \
+RUN apt-get update && apt-get install -y build-essential && \
     rm -rf /var/lib/apt/lists/*
 
 
