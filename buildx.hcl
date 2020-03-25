@@ -32,3 +32,10 @@ target "test" {
   inherits = ["settings"],
   target = "slim"
 }
+
+target "reg-test" {
+  inherits = ["settings"],
+  target = "slim"
+  cache-from = ["type=registry;ref=docker.pkg.github.com/viceice/docker-buildx-tests/test:cache-slim"]
+  cache-to = ["type=registry;ref=docker.pkg.github.com/viceice/docker-buildx-tests/test:cache-slim,mode=max"]
+}

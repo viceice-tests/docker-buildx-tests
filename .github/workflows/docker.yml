@@ -8,7 +8,7 @@ env:
   PLATFORM: linux/amd64
   DOCKER_CACHE_TAG: _cache
   DOCKER_REPO: renovate/renovate
-  CACHE_VERSION: v1
+  CACHE_VERSION: v2
   BUILDX_VERSION: v0.3.1
 
 jobs:
@@ -75,8 +75,8 @@ jobs:
         continue-on-error: true
         run: |
           docker buildx bake -f buildx.hcl \
-            --set test.cache-to=type=registry;ref=docker.pkg.github.com/${{ github.repository }}/test:cache-slim,mode=max \
-            --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:cache-slim \
+            --set test.cache-to=type=registry;ref=docker.pkg.github.com/${{ github.repository }}/test:cache-slim2,mode=max \
+            --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:cache-slim2 \
             test
 
   cache_inline:
@@ -100,7 +100,7 @@ jobs:
         run: |
           docker buildx bake -f buildx.hcl \
             --set test.cache-to=type=inline,mode=max \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:inline-slim \
+            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:inline-slim2 \
             --set test.output=type=registry \
             test
 
@@ -124,7 +124,7 @@ jobs:
         continue-on-error: true
         run: |
           docker buildx bake -f buildx.hcl \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:slim \
+            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:slim2 \
             --set test.output=type=registry \
             test
 
