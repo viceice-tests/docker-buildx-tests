@@ -75,8 +75,8 @@ jobs:
         continue-on-error: true
         run: |
           docker buildx bake -f test.hcl \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/reg \
             --set test.cache-to=type=registry;ref=docker.pkg.github.com/${{ github.repository }}/reg:_cache \
+            --set test.tags=docker.pkg.github.com/${{ github.repository }}/reg \
             --set test.output=type=registry \
             test
 
@@ -122,6 +122,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
       - name: Build the Docker images
+        continue-on-error: true
         run: |
           docker buildx bake -f test.hcl \
             --set test.tags=docker.pkg.github.com/${{ github.repository }}/no-cache \
