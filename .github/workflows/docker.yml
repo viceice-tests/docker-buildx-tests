@@ -75,8 +75,8 @@ jobs:
         continue-on-error: true
         run: |
           docker buildx bake -f buildx.hcl \
-            --set test.cache-to=docker.pkg.github.com/${{ github.repository }}/test:_cache-slim,mode=max \
-            --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:_cache-slim \
+            --set test.cache-to=docker.pkg.github.com/${{ github.repository }}/test:cache-slim,mode=max \
+            --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:cache-slim \
             test
 
   cache_inline:
