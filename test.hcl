@@ -1,5 +1,5 @@
 group "default" {
-	targets = ["test"]
+  targets = ["test"]
 }
 
 target "settings" {
@@ -7,6 +7,6 @@ target "settings" {
 }
 
 target "test" {
-  inherits = ["settings"],
-  target = "slim"
+  inherits = ["settings"]
+  target   = "slim"
 }
