@@ -168,36 +168,15 @@ jobs:
   #     # - run: docker buildx build -t docker.pkg.github.com/${{ github.repository }}/test --push .
   #     #   continue-on-error: true
 
-  ghcr_cache_inline:
+  ghcr:
     runs-on: ubuntu-latest
 
     timeout-minutes: 20
 
-    steps:
-      - name: Setup
-        run: |
-          set -ex
-          docker buildx create --name builder --use --driver docker-container
-          docker buildx inspect --bootstrap
-          docker info
-
-      - uses: actions/checkout@v2
-
-      - name: Log into registry
-        run: echo "${{ secrets.GH_PACKAGES }}" | docker login ghcr.io -u viceice --password-stdin
-
-      - name: Build the Docker images
-        run: |
-          docker buildx bake -f test.hcl \
-            --set test.cache-to=type=inline \
-            --set test.tags=ghcr.io/${{ github.repository_owner }}/test:inline \
-            --set test.output=type=registry \
-            test
-
-  ghcr_cache_to_registry:
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [ghcr_inline, ghcr_reg]
 
     steps:
       - name: Setup
@@ -215,10 +194,8 @@ jobs:
           echo "${{ secrets.GH_PACKAGES }}" | docker login ghcr.io -u viceice --password-stdin
 
       - name: Build the Docker images
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.repository }}
         run: |
-          docker buildx bake -f test.hcl \
-            --set test.cache-from=type=registry,ref=ghcr.io/${{ github.repository_owner }}/cache:reg_cache \
-            --set test.cache-to=type=registry,ref=ghcr.io/${{ github.repository_owner }}/cache:reg_cache,mode=max \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:reg,ghcr.io/${{ github.repository_owner }}/test \
-            --set test.output=type=registry \
-            test
+          docker buildx bake -f test.hcl ${{matrix.target}}
