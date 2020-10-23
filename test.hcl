@@ -16,7 +16,7 @@ target "settings" {
 target "test" {
   inherits = ["settings"]
   target   = "slim"
-  output   = ["type=registry", "type=docker"]
+  output   = ["type=registry"]
 }
 target "pkg_no-cache" {
   inherits = ["test"]
