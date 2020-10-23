@@ -8,7 +8,7 @@ target "base" {
 }
 
 target "settings" {
-  platform = ["linux/amd64"]
+  platforms = ["linux/amd64"]
 }
 
 target "cache" {
