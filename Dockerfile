@@ -1,10 +1,10 @@
 # Base image
 #============
-FROM renovate/yarn:1.22.4@sha256:6f559c0e98e931b0650e35418d385f13726244ec20b4dac6de3dfa808ad49319 AS base
+FROM renovate/yarn AS base
 
 LABEL maintainer="Michael Kries <michael.kriese@visualon.de"
 LABEL name="test"
-LABEL org.opencontainers.image.source="https://github.com/ViceIce/docker-buildx-tests"
+LABEL org.opencontainers.image.source="https://github.com/viceice-tests/docker-buildx-tests"
 
 WORKDIR /usr/src/app/
 
