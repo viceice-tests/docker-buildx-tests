@@ -111,7 +111,9 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - run: |
+      - name: Setup
+        run: |
+          set -ex
           docker buildx ls
           docker buildx create --use
           docker buildx inspect --bootstrap
