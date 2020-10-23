@@ -20,6 +20,8 @@ jobs:
       - name: Setup
         run: |
           set -ex
+          docker buildx create --name builder --use --driver docker-container
+          docker buildx inspect --bootstrap
           docker info
 
       - uses: actions/checkout@v2
@@ -63,6 +65,8 @@ jobs:
       - name: Setup
         run: |
           set -ex
+          docker buildx create --name builder --use --driver docker-container
+          docker buildx inspect --bootstrap
           docker info
 
       - uses: actions/checkout@v2
@@ -88,6 +92,8 @@ jobs:
       - name: Setup
         run: |
           set -ex
+          docker buildx create --name builder --use --driver docker-container
+          docker buildx inspect --bootstrap
           docker info
 
       - uses: actions/checkout@v2
@@ -113,6 +119,8 @@ jobs:
       - name: Setup
         run: |
           set -ex
+          docker buildx create --name builder --use --driver docker-container
+          docker buildx inspect --bootstrap
           docker info
 
       - uses: actions/checkout@v2
@@ -137,6 +145,8 @@ jobs:
       - name: Setup
         run: |
           set -ex
+          docker buildx create --name builder --use --driver docker-container
+          docker buildx inspect --bootstrap
           docker info
 
       - uses: actions/checkout@v2
