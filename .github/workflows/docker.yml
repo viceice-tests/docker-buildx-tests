@@ -166,3 +166,30 @@ jobs:
 
       # - run: docker buildx build -t docker.pkg.github.com/${{ github.repository }}/test --push .
       #   continue-on-error: true
+
+  ghcr_cache_inline:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 20
+
+    steps:
+      - name: Setup
+        run: |
+          set -ex
+          docker buildx create --name builder --use --driver docker-container
+          docker buildx inspect --bootstrap
+          docker info
+
+      - uses: actions/checkout@v2
+
+      - name: Log into registry
+        run: echo "${{ secrets.GH_PACKAGES }}" | docker login ghcr.io -u viceice --password-stdin
+
+      - name: Build the Docker images
+        continue-on-error: true
+        run: |
+          docker buildx bake -f test.hcl \
+            --set test.cache-to=type=inline \
+            --set test.tags=ghcr.io/${{ github.repository_owner }}/test:inline \
+            --set test.output=type=registry \
+            test
