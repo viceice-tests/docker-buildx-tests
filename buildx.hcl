@@ -36,6 +36,6 @@ target "test" {
 target "reg-test" {
   inherits   = ["settings"]
   target     = "slim"
-  cache-from = ["type=registry;ref=docker.pkg.github.com/viceice-tests/docker-buildx-tests/test:cache-slim"]
-  cache-to   = ["type=registry;ref=docker.pkg.github.com/viceice-tests/docker-buildx-tests/test:cache-slim,mode=max"]
+  cache-from = ["type=registry,ref=docker.pkg.github.com/viceice-tests/docker-buildx-tests/test:cache-slim"]
+  cache-to   = ["type=registry,ref=docker.pkg.github.com/viceice-tests/docker-buildx-tests/test:cache-slim,mode=max"]
 }

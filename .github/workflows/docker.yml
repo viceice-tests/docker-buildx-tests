@@ -78,37 +78,38 @@ jobs:
         continue-on-error: true
         run: |
           docker buildx bake -f test.hcl \
-            --set test.cache-to=type=registry;ref=docker.pkg.github.com/${{ github.repository }}/reg:_cache \
+            --set test.cache-to=type=registry,ref=docker.pkg.github.com/${{ github.repository }}/cache:reg_cache \
             --set test.tags=docker.pkg.github.com/${{ github.repository }}/reg \
             --set test.output=type=registry \
             test
 
-  cache_inline:
-    runs-on: ubuntu-latest
+# does not work
+  # cache_inline:
+  #   runs-on: ubuntu-latest
 
-    timeout-minutes: 20
+  #   timeout-minutes: 20
 
-    steps:
-      - name: Setup
-        run: |
-          set -ex
-          docker buildx create --name builder --use --driver docker-container
-          docker buildx inspect --bootstrap
-          docker info
+  #   steps:
+  #     - name: Setup
+  #       run: |
+  #         set -ex
+  #         docker buildx create --name builder --use --driver docker-container
+  #         docker buildx inspect --bootstrap
+  #         docker info
 
-      - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v2
 
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+  #     - name: Log into registry
+  #       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-      - name: Build the Docker images
-        continue-on-error: true
-        run: |
-          docker buildx bake -f test.hcl \
-            --set test.cache-to=type=inline \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:inline \
-            --set test.output=type=registry \
-            test
+  #     - name: Build the Docker images
+  #       continue-on-error: true
+  #       run: |
+  #         docker buildx bake -f test.hcl \
+  #           --set test.cache-to=type=inline \
+  #           --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:inline \
+  #           --set test.output=type=registry \
+  #           test
 
   no_cache:
     runs-on: ubuntu-latest
@@ -136,36 +137,37 @@ jobs:
             --set test.output=type=registry \
             test
 
-  inline_cache_docker:
-    runs-on: ubuntu-latest
+# does not work
+  # inline_cache_docker:
+  #   runs-on: ubuntu-latest
 
-    timeout-minutes: 20
+  #   timeout-minutes: 20
 
-    steps:
-      - name: Setup
-        run: |
-          set -ex
-          docker buildx create --name builder --use --driver docker-container
-          docker buildx inspect --bootstrap
-          docker info
+  #   steps:
+  #     - name: Setup
+  #       run: |
+  #         set -ex
+  #         docker buildx create --name builder --use --driver docker-container
+  #         docker buildx inspect --bootstrap
+  #         docker info
 
-      - uses: actions/checkout@v2
+  #     - uses: actions/checkout@v2
 
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+  #     - name: Log into registry
+  #       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-      - run: |
-          docker buildx bake -f buildx.hcl \
-            --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:inline-slim \
-            --set test.cache-to=type=inline,mode=max \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:inline-slim \
-            --set test.output=type=registry \
-            test
-      # docker push docker.pkg.github.com/${{ github.repository }}/test:docker-slim
-        continue-on-error: true
+  #     - run: |
+  #         docker buildx bake -f buildx.hcl \
+  #           --set test.cache-from=docker.pkg.github.com/${{ github.repository }}/test:inline-slim \
+  #           --set test.cache-to=type=inline,mode=max \
+  #           --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:inline-slim \
+  #           --set test.output=type=registry \
+  #           test
+  #     # docker push docker.pkg.github.com/${{ github.repository }}/test:docker-slim
+  #       continue-on-error: true
 
-      # - run: docker buildx build -t docker.pkg.github.com/${{ github.repository }}/test --push .
-      #   continue-on-error: true
+  #     # - run: docker buildx build -t docker.pkg.github.com/${{ github.repository }}/test --push .
+  #     #   continue-on-error: true
 
   ghcr_cache_inline:
     runs-on: ubuntu-latest
@@ -191,5 +193,35 @@ jobs:
           docker buildx bake -f test.hcl \
             --set test.cache-to=type=inline \
             --set test.tags=ghcr.io/${{ github.repository_owner }}/test:inline \
+            --set test.output=type=registry \
+            test
+
+  ghcr_cache_to_registry:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 20
+
+    steps:
+      - name: Setup
+        run: |
+          set -ex
+          docker buildx create --name builder --use --driver docker-container
+          docker buildx inspect --bootstrap
+          docker info
+
+      - uses: actions/checkout@v2
+
+      - name: Log into registry
+        run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+        echo "${{ secrets.GH_PACKAGES }}" | docker login ghcr.io -u viceice --password-stdin
+
+      - name: Build the Docker images
+        continue-on-error: true
+        run: |
+          docker buildx bake -f test.hcl \
+            --set test.cache-from=type=registry,ref=ghcr.io/${{ github.repository_owner }}/cache:reg_cache \
+            --set test.cache-to=type=registry,ref=ghcr.io/${{ github.repository_owner }}/cache:reg_cache,mode=max \
+            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:reg \
             --set test.output=type=registry \
             test
