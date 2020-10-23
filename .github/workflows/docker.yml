@@ -152,7 +152,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [ghcr_inline, ghcr_reg, ghcr_no-cache]
+        target: [ghcr_inline, ghcr_reg, ghcr_no-cache, pkg_no-cache]
 
     steps:
       - name: Setup

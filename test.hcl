@@ -1,8 +1,8 @@
 variable "OWNER" {
-	default = "viceice-tests"
+  default = "viceice-tests"
 }
 variable "REPO" {
-	default = "viceice-tests/docker-buildx-tests"
+  default = "viceice-tests/docker-buildx-tests"
 }
 
 group "default" {
@@ -18,10 +18,14 @@ target "test" {
   target   = "slim"
   output   = ["type=registry"]
 }
+target "pkg_no-cache" {
+  inherits = ["test"]
+  tags     = ["docker.pkg.github.com/${REPO}/test:no-cache"]
+}
 
 target "ghcr_no-cache" {
-  inherits   = ["test"]
-  tags       = ["docker.pkg.github.com/${REPO}/test:no-cache", "ghcr.io/${OWNER}/test:no-cache"]
+  inherits = ["test"]
+  tags     = ["ghcr.io/${OWNER}/test:no-cache"]
 }
 
 target "ghcr_inline" {
@@ -35,5 +39,5 @@ target "ghcr_reg" {
   inherits   = ["test"]
   cache-from = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg_cache"]
   cache-to   = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg_cache,mode=max"]
-  tags       = ["docker.pkg.github.com/${REPO}/test:reg", "ghcr.io/${OWNER}/test:reg"]
+  tags       = ["ghcr.io/${OWNER}/test:reg"]
 }
