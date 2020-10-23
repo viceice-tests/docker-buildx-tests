@@ -1,3 +1,10 @@
+variable "OWNER" {
+	default = "viceice-tests"
+}
+variable "REPO" {
+	default = "viceice-tests/docker-buildx-tests"
+}
+
 group "default" {
   targets = ["test"]
 }
@@ -9,7 +16,7 @@ target "settings" {
 target "test" {
   inherits = ["settings"]
   target   = "slim"
-  output   = "type=registry"
+  output   = ["type=registry"]
 }
 
 target "ghcr_inline" {
