@@ -16,11 +16,12 @@ target "settings" {
 target "test" {
   inherits = ["settings"]
   target   = "slim"
-  output   = ["type=registry"]
+  output   = ["type=registry", "type=docker"]
 }
 target "pkg_no-cache" {
   inherits = ["test"]
   tags     = ["docker.pkg.github.com/${REPO}/test:no-cache"]
+  output   = ["type=docker"]
 }
 
 target "ghcr_no-cache" {
@@ -35,9 +36,23 @@ target "ghcr_inline" {
   tags       = ["ghcr.io/${OWNER}/test:inline"]
 }
 
+target "ghcr_inline-max" {
+  inherits   = ["test"]
+  cache-from = ["type=registry,ref=ghcr.io/${OWNER}/test:inline-max,mode=max"]
+  cache-to   = ["type=inline"]
+  tags       = ["ghcr.io/${OWNER}/test:inline-max"]
+}
+
 target "ghcr_reg" {
   inherits   = ["test"]
-  cache-from = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg_cache"]
-  cache-to   = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg_cache,mode=max"]
+  cache-from = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg"]
+  cache-to   = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg"]
   tags       = ["ghcr.io/${OWNER}/test:reg"]
+}
+
+target "ghcr_reg-max" {
+  inherits   = ["test"]
+  cache-from = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg-max"]
+  cache-to   = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg-max,mode=max"]
+  tags       = ["ghcr.io/${OWNER}/test:reg-max"]
 }
