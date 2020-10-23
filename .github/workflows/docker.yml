@@ -112,10 +112,10 @@ jobs:
 
     steps:
       - run: |
-        docker buildx create --use
-        docker buildx inspect --bootstrap
-        docker buildx install
-        docker info
+          docker buildx create --use
+          docker buildx inspect --bootstrap
+          docker buildx install
+          docker info
 
       - uses: actions/checkout@v2
 
