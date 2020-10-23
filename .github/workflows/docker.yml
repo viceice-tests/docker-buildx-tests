@@ -9,7 +9,6 @@ env:
   DOCKER_CACHE_TAG: _cache
   DOCKER_REPO: renovate/renovate
   CACHE_VERSION: v2
-  BUILDX_VERSION: v0.4.2
 
 jobs:
   local_cache:
@@ -18,10 +17,10 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - name: Set up Docker Buildx ${{ env.BUILDX_VERSION }}
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          version: ${{ env.BUILDX_VERSION }}
+      - name: Setup
+        run: |
+          set -ex
+          docker info
 
       - uses: actions/checkout@v2
 
@@ -61,10 +60,10 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - name: Set up Docker Buildx ${{ env.BUILDX_VERSION }}
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          version: ${{ env.BUILDX_VERSION }}
+      - name: Setup
+        run: |
+          set -ex
+          docker info
 
       - uses: actions/checkout@v2
 
@@ -86,10 +85,10 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - name: Set up Docker Buildx ${{ env.BUILDX_VERSION }}
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          version: ${{ env.BUILDX_VERSION }}
+      - name: Setup
+        run: |
+          set -ex
+          docker info
 
       - uses: actions/checkout@v2
 
@@ -114,10 +113,6 @@ jobs:
       - name: Setup
         run: |
           set -ex
-          docker buildx ls
-          docker buildx create --use
-          docker buildx inspect --bootstrap
-          docker buildx install
           docker info
 
       - uses: actions/checkout@v2
@@ -139,15 +134,12 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - name: Set up Docker Buildx ${{ env.BUILDX_VERSION }}
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          version: ${{ env.BUILDX_VERSION }}
+      - name: Setup
+        run: |
+          set -ex
+          docker info
 
       - uses: actions/checkout@v2
-
-      - run: docker buildx ls
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
