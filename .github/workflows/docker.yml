@@ -111,30 +111,6 @@ jobs:
   #           --set test.output=type=registry \
   #           test
 
-  no_cache:
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 20
-
-    steps:
-      - name: Setup
-        run: |
-          set -ex
-          docker buildx create --name builder --use --driver docker-container
-          docker buildx inspect --bootstrap
-          docker info
-
-      - uses: actions/checkout@v2
-
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
-      - name: Build the Docker images
-        run: |
-          docker buildx bake -f test.hcl \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/test:no-cache \
-            --set test.output=type=registry \
-            test
 
 # does not work
   # inline_cache_docker:
@@ -176,7 +152,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [ghcr_inline, ghcr_reg]
+        target: [ghcr_inline, ghcr_reg, ghcr_no-cache]
 
     steps:
       - name: Setup

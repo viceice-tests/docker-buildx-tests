@@ -19,6 +19,11 @@ target "test" {
   output   = ["type=registry"]
 }
 
+target "ghcr_no-cache" {
+  inherits   = ["test"]
+  tags       = ["docker.pkg.github.com/${REPO}/test:no-cache", "ghcr.io/${OWNER}/test:no-cache"]
+}
+
 target "ghcr_inline" {
   inherits   = ["test"]
   cache-from = ["type=registry,ref=ghcr.io/${OWNER}/test:inline"]
@@ -30,5 +35,5 @@ target "ghcr_reg" {
   inherits   = ["test"]
   cache-from = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg_cache"]
   cache-to   = ["type=registry,ref=ghcr.io/${OWNER}/cache:reg_cache,mode=max"]
-  tags       = ["docker.pkg.github.com/${REPO}/test:reg", "ghcr.io/${OWNER}/test"]
+  tags       = ["docker.pkg.github.com/${REPO}/test:reg", "ghcr.io/${OWNER}/test:reg"]
 }
