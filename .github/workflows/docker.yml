@@ -213,8 +213,8 @@ jobs:
 
       - name: Log into registry
         run: |
-        echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-        echo "${{ secrets.GH_PACKAGES }}" | docker login ghcr.io -u viceice --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+          echo "${{ secrets.GH_PACKAGES }}" | docker login ghcr.io -u viceice --password-stdin
 
       - name: Build the Docker images
         continue-on-error: true
