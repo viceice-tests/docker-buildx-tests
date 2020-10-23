@@ -11,78 +11,6 @@ env:
   CACHE_VERSION: v2
 
 jobs:
-  local_cache:
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 20
-
-    steps:
-      - name: Setup
-        run: |
-          set -ex
-          docker buildx create --name builder --use --driver docker-container
-          docker buildx inspect --bootstrap
-          docker info
-
-      - uses: actions/checkout@v2
-
-      - name: Cache docker layer
-        id: docker_cache
-        uses: actions/cache@v2
-        with:
-          path: tmp/docker
-          key: docker_cache-${{ env.CACHE_VERSION }}-${{ hashFiles('Dockerfile*') }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            docker_cache-${{ env.CACHE_VERSION }}-
-
-      - name: Prepare docker cache
-        if: steps.docker_cache.outputs.cache-hit != 'true'
-        run: docker buildx bake -f buildx.hcl base
-
-      - name: Build the Docker images
-        run: |
-          docker buildx bake -f buildx.hcl --set cache.output=type=docker
-
-      - name: Test the Docker full image
-        run: |
-          docker run --rm -t ${DOCKER_REPO} yarn --version
-
-      - name: Test the Docker slim image
-        run: |
-          docker run --rm -t ${DOCKER_REPO}:slim yarn --version
-
-      - name: Image history
-        run: docker history ${DOCKER_REPO}
-      - name: Image size
-        run: docker image ls | grep ${DOCKER_REPO}
-
-  cache_to_registry:
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 20
-
-    steps:
-      - name: Setup
-        run: |
-          set -ex
-          docker buildx create --name builder --use --driver docker-container
-          docker buildx inspect --bootstrap
-          docker info
-
-      - uses: actions/checkout@v2
-
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
-      - name: Build the Docker images
-        run: |
-          docker buildx bake -f test.hcl \
-            --set test.cache-from=type=registry,ref=docker.pkg.github.com/${{ github.repository }}/cache:reg-cache \
-            --set test.cache-to=type=registry,ref=docker.pkg.github.com/${{ github.repository }}/cache:reg-cache,mode=max \
-            --set test.tags=docker.pkg.github.com/${{ github.repository }}/reg \
-            --set test.output=type=registry \
-            test
-
   build:
     runs-on: ubuntu-latest
 
@@ -99,6 +27,8 @@ jobs:
             ghcr_reg-max,
             ghcr_no-cache,
             pkg_no-cache,
+            pkg_inline,
+            pkg_inline-max,
           ]
 
     steps:
@@ -122,5 +52,6 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           docker buildx bake -f test.hcl ${{matrix.target}}
+          docker buildx bake -f test.hcl --set *.output=type=docker --set *.cache-to=type=inline ${{matrix.target}}
 
       - run: docker image ls

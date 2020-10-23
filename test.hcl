@@ -24,6 +24,22 @@ target "pkg_no-cache" {
   output   = ["type=docker"]
 }
 
+target "pkg_inline" {
+  inherits   = ["test"]
+  cache-from = ["type=registry,ref=docker.pkg.github.com/${REPO}/test:inline"]
+  cache-to   = ["type=inline"]
+  tags       = ["docker.pkg.github.com/${REPO}/test:inline"]
+  output     = ["type=registry"]
+}
+
+target "pkg_inline-max" {
+  inherits   = ["test"]
+  cache-from = ["type=registry,ref=docker.pkg.github.com/${REPO}/test:inline-max,mode=max"]
+  cache-to   = ["type=inline"]
+  tags       = ["docker.pkg.github.com/${REPO}/test:inline-max"]
+  output     = ["type=registry"]
+}
+
 target "ghcr_no-cache" {
   inherits = ["test"]
   tags     = ["ghcr.io/${OWNER}/test:no-cache"]
